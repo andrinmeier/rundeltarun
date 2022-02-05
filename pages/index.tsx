@@ -3,18 +3,12 @@ import { sum } from 'mathjs';
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useCallback, useState } from 'react';
+import CostSavingsTable from '../components/CostSavingsTable';
 import executeIndexedValuesScenario from '../compression/IndexedValuesScenario';
 import executeScenario from '../compression/ScenarioExecutor';
 import executeSortedValuesNoMissingValuesScenario from '../compression/SortedValuesNoMissingValuesScenario';
 import executeSortedValuesScenario from '../compression/SortedValuesScenario';
 import summarize from '../compression/Summary';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 
 const Home: NextPage = () => {
   const [numberOfValues, setNumberOfValues] = useState(10);
@@ -57,8 +51,8 @@ const Home: NextPage = () => {
         />
       </Head>
       <h1>Delta Run-Length Encoding Savings Calculator</h1>
-      <p>This tool allows you to calculate how much you would save if you were to use delta and/or run-length encoding. The data is randomly generated and can be parameterized to approximated your use case.</p>
-      <h2>How many values do you expected?</h2>
+      <p>This tool allows you to calculate how much you could save by using delta and/or run-length encoding. The data is randomly generated and can be parameterized to approximate your use case.</p>
+      <h2>How many values do you expect?</h2>
       <Slider
         aria-label="Number of values"
         value={numberOfValues}
@@ -80,40 +74,9 @@ const Home: NextPage = () => {
         max={255}
         onChange={handleRangeChange}
       />
-      <Button variant="contained" onClick={handleExecute}>Calcuate savings</Button>
-      <h2>Calculated savings</h2>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 300 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell align="right">0.25</TableCell>
-              <TableCell align="right">0.5</TableCell>
-              <TableCell align="right">0.75</TableCell>
-              <TableCell align="right">Std</TableCell>
-              <TableCell align="right">Mean</TableCell>
-              <TableCell align="right">Savings</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {results && results.map((result: any) => (
-              <TableRow
-                key={result.name}
-              >
-                <TableCell component="th" scope="row">
-                  {result.name}
-                </TableCell>
-                <TableCell align="right">{result["0.25"]}</TableCell>
-                <TableCell align="right">{result["0.50"]}</TableCell>
-                <TableCell align="right">{result["0.75"]}</TableCell>
-                <TableCell align="right">{result["std"]}</TableCell>
-                <TableCell align="right">{result["mean"]}</TableCell>
-                <TableCell align="right">{result["savings"]}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Button sx={{ marginTop: 3, marginBottom: 5 }} variant="contained" onClick={handleExecute}>Calculate</Button>
+      <h2>Savings (in bytes)</h2>
+      {results.length > 0 ? <CostSavingsTable results={results}/> : <p>No savings calculated yet.</p>}
     </div>
   )
 }
